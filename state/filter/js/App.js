@@ -1,11 +1,30 @@
 'use strict'
 
-const App = props => (
+class App extends React.Component {
+	constructor (props) {
+		super(props);
+		this.state = {
+			filter: "All"
+		}
+	}
+
+	filterProjects() {
+		if (this.state.filter === "All") {
+			return this.props.projects;
+		} else {
+			return this.props.projects.filter(project => project.category === this.state.filter);
+		}
+	}
+
+	render () {
+	return (
   <div>
     <Toolbar
-      filters={props.filters}
-      selected={'All'}
-      onSelectFilter={(filter) => console.log(filter)} />
-    <Portfolio projects={props.projects} />
+      filters={this.props.filters}
+      selected={this.state.filter}
+      onSelectFilter={(el) => this.setState({filter: el})} />
+    <Portfolio projects={this.filterProjects()} />
   </div>
 );
+	}
+	}
