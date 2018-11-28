@@ -23,7 +23,7 @@ const Menu = (props) => {
 };
 
 Menu.propTypes = {
-  handleSearch: PropTypes.func,
+  handleSearch: PropTypes.string,
 
   title: PropTypes.string,
   version: (props, propName, componentName) => {
