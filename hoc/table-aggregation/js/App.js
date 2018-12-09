@@ -1,76 +1,82 @@
 'use strict';
 
-class App extends React.Component {
-    constructor(...props) {
-        super(...props);
-        this.state = {
-            list: []
-        };
-        this.WithDataMonth = withData(MonthTable);
-        this.WithDataYear = withData(YearTable);
-        this.WithDataSort = withData(SortTable);
+const withData = callback => Component => class extends React.Component {
+    constructor(props) {
+        super(props);
     }
 
-    componentDidMount() {
-        axios.get('https://api.myjson.com/bins/l2s9l').then(response => {
-            this.setState(response.data);
-        });
+    static get displayName() {
+        const name = Component.displayName || Component.name || 'Component';
+        return `withData(${name})`;
+    }
+
+    componentWillReceiveProps(nextProps) {
+        nextProps.list.sort((a, b) => new Date(a.date) - new Date(b.date));
+        nextProps.list = callback(nextProps);
     }
 
     render() {
-        const { WithDataMonth, WithDataYear, WithDataSort } = this;
+        return <Component {...this.props} />;
+    }
+};
+
+const treatData = (measure, props) => {
+    const getValidItem = item => isNaN(parseInt(item)) ? item : parseInt(item);
+    const data = [];
+    const current = {};
+    props.list.forEach(el => {
+        if (!(measure(el) in current)) {
+            current[measure(el)] = 0;
+        }
+    });
+    Object.keys(current).forEach(item => {
+        props.list.forEach(el => {
+            if (getValidItem(item) === measure(el)) {
+                current[item] += el.amount;
+            }
+        });
+        data.push({[`${measure.name}`]: item, amount: current[item]});
+    });
+    return data;
+};
+
+const getMonthTable = props => {
+    const month = item => new Date(item.date).toLocaleDateString('en-En', {month: 'long'});
+    return treatData(month, props);
+};
+
+const getYearTable = props => {
+    const year = item => new Date(item.date).getFullYear();
+    return treatData(year, props);
+};
+
+const getSortTable = props => props.list,
+WithDataMonth = withData(getMonthTable)(MonthTable),
+WithDataYear = withData(getYearTable)(YearTable),
+WithDataSort = withData(getSortTable)(SortTable);
+
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            list: []
+        };
+    }
+
+    componentDidMount() {
+        axios.get('https://api.myjson.com/bins/l2s9l')
+            .then(response => {
+                this.setState(response.data);
+            });
+    }
+
+    render() {
         return (
             <div id="app">
-                <WithDataMonth list={ this.state.list } type='month' />
-                <WithDataYear list={ this.state.list } type='year' />
-                <WithDataSort list={ this.state.list } type='sort' />
+                <WithDataMonth list={this.state.list} />
+                <WithDataYear list={this.state.list} />
+                <WithDataSort list={this.state.list} />
             </div>
         );
     }
-}
-
-function withData(Component) {
-    return class extends React.Component {
-        constructor(props) {
-            super(props);
-            this.state = {
-                type: this.props.type
-            };
-        }
-
-        getType(type) {
-            if (type === 'month') {
-                return this.groupByType(this.props.list, type);
-            } else if (type === 'year') {
-                return this.groupByType(this.props.list, type);
-            } else if (type === 'sort') {
-                return this.props.list.sort((first, next) => new Date(next.date) - new Date(first.date));
-            }
-        }
-
-        groupByType(dataArray, type) {
-            return dataArray.reduce((groupedArray, currentItem) => {
-                const itemDate = new Date(currentItem.date);
-                let groupBy;
-                if (type === 'month') {
-                    groupBy = itemDate.toLocaleString('ru', { month: "long" }); 
-                } else {
-                    groupBy = itemDate.getFullYear();
-                }
-                
-                let currentElement = groupedArray.find(element => element[type] === groupBy);
-
-                if (currentElement) {
-                    currentElement.amount += currentItem.amount;
-                } else {
-                    groupedArray.push({ [type]: groupBy, amount: currentItem.amount });
-                }
-                return groupedArray;
-            }, []);
-        }
-
-        render() {
-            return <Component list={ this.getType(this.state.type) } />
-        }
-    }
-}
+};
