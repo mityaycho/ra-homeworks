@@ -14,5 +14,5 @@ function TimeAttackPage() {
         на летних шинах и шлем. 
       </p>
     </article>
-  )
+  );
 }

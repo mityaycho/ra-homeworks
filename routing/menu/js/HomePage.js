@@ -9,5 +9,5 @@ function HomePage() {
         гоночной трассе России.​​​
       </p>
     </article>
-  )
+  );
 }
