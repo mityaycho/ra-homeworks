@@ -32,4 +32,4 @@ class Story extends React.Component {
       </div>
     );
   }
-}
+};

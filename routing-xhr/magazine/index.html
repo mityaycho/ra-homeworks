@@ -21,19 +21,27 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
+  <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
   <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
   <script type="text/babel" src="./js/articles.js"></script>
 
+  <script type="text/babel">
+    const ReactRouterDOM = window.ReactRouterDOM;
+    const { BrowserRouter, Router, Route, NavLink, Link, Switch } = ReactRouterDOM;
+  </script>
+
   <script type="text/babel" src="./js/Nav.js"></script>
   <script type="text/babel" src="./js/Article.js"></script>
   <script type="text/babel" src="./js/Homepage.js"></script>
+  <script type="text/babel" src="./js/ArticlePage.js"></script>
+  <script type="text/babel" src="./js/SubscribtionPage.js"></script>
 
   <script type="text/babel">
     ReactDOM.render(
-      <Homepage/>,
-      document.getElementById('root')
+      <Homepage/>
+      , document.getElementById('root')
     );
   </script>
 </body>

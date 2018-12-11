@@ -1,6 +1,6 @@
 class ArticlePage extends React.Component {
   render() {
-    const article = articles.find(a => a.id === parseInt(window.location.search.split('=')[1], 10))
+    const article = articles.find(a => a.id === parseInt(window.location.search.split('=')[1], 10));
 
     return (
       <div>
@@ -12,4 +12,4 @@ class ArticlePage extends React.Component {
       </div>
     );
   }
-}
+};

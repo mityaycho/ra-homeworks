@@ -15,4 +15,4 @@ class SubscribtionPage extends React.Component {
       </div>
     );
   }
-}
+};
